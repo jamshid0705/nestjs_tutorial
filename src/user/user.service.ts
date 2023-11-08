@@ -1,10 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { UserDto } from './dto/user.dto.ts';
+import { InjectModel } from '@nestjs/mongoose';
+import { User } from './user.schema.js';
+import { Model } from 'mongoose';
 
 @Injectable()
 export class UserService {
     users:UserDto[]
-    constructor(){
+    constructor(@InjectModel(User.name) private UserModel:Model<User>){
         this.users=[
             {
                 id:0,
@@ -27,29 +30,22 @@ export class UserService {
         ]
     }
     async getAll(){
-        return this.users
+        return this.UserModel.find({})
     }
 
     async create(dto:UserDto){
-        const data={
-            id:new Date().getTime(),
-            ...dto
-        }
-        console.log(Object.assign(this.users,data))
-        return [...this.users]
+        return this.UserModel.create(dto)
     }
 
     async getById(id:string){
-        return this.users.find(data=>data.id===Number(id))
+        return this.UserModel.findById(id)
     }
 
     async update(id:string,dto:UserDto){
-        let data= this.users.find(data=>data.id===Number(id))
-        data=dto
-        return dto
+        return this.UserModel.findByIdAndUpdate(id, dto, {new:true} )
     }
 
     async delete(id:string){
-        return this.users.filter(data=>data.id!==Number(id))
+        return this.UserModel.findByIdAndDelete(id)
     }
 }
