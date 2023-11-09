@@ -1,6 +1,6 @@
-import { Controller ,Get, HttpCode,Post,Body ,Patch,Delete} from '@nestjs/common';
+import { Controller ,Get, HttpCode,Post,Body ,Patch,Delete, ValidationPipe} from '@nestjs/common';
 import { UserDto } from './dto/user.dto.ts';
-import { Param } from '@nestjs/common/decorators/index.js';
+import { Param, UsePipes } from '@nestjs/common/decorators/index.js';
 import { UserService } from './user.service.js';
 
 @Controller('user')
@@ -15,6 +15,7 @@ export class UserController {
 
     @HttpCode(201)
     @Post()
+    @UsePipes(ValidationPipe)
     async create(@Body() dto:UserDto){
        return this.userService.create(dto)
     }
